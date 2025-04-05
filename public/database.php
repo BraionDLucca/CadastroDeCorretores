@@ -1,5 +1,6 @@
 <?php
 
+// Conecta com o banco sql
 $server_name = "localhost";
 $username = "root";
 $password = "";
@@ -15,6 +16,7 @@ if (!$conn) {
     echo "Falha na conexão.";
 }
 
+// Cria o banco se já não existir.
 $sql = "CREATE DATABASE IF NOT EXISTS $db_name";
 if (!mysqli_query($conn, $sql)) {
     die("Erro ao criar banco de dados: " . mysqli_error($conn));
@@ -22,6 +24,7 @@ if (!mysqli_query($conn, $sql)) {
 
 mysqli_select_db($conn, $db_name);
 
+// Cria o a tabela corretores se já não existir.
 $sql = "CREATE TABLE IF NOT EXISTS corretores (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
@@ -32,5 +35,4 @@ $sql = "CREATE TABLE IF NOT EXISTS corretores (
 if (!mysqli_query($conn, $sql)) {
     die("Erro ao criar tabela: " . mysqli_error($conn));
 }
-
 ?>
