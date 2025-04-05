@@ -1,0 +1,175 @@
+/*Geral*/
+body {
+    font-family: Helvetica, sans-serif;
+    text-align: center;
+}
+
+h1{
+    font-size: 300%;
+    margin-top: 40px;
+}
+
+.input {
+    font-size: medium;
+    border: 2px solid black;
+    height: 60px;
+    width: 428px;
+    padding-left: 15px;
+    border-radius: 4px;
+    display: inline;
+}
+
+/* Tablelas */
+table{
+    background-color: black;
+    margin: auto;
+    width: 1200px;
+}
+
+th{
+    background-color: white;
+    width: 10%;
+    padding: 15px;
+}
+
+.itens_tabela{
+    background-color: white;
+    font-size: medium;
+    padding: 15px;
+}
+
+
+/*index.php*/
+#nome {
+    width: 882px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#enviar_btn{
+    background-color: rgb(91, 146, 255);
+    color: rgb(255, 255, 255);
+    width: 901px;
+    height: 60px;
+    margin-bottom: 40px;
+
+    font-size: medium;
+    font-weight: bold;
+
+    border: 2px solid black;
+    border-radius: 4px;
+
+    cursor: pointer;
+    transition: background-color 0.4s;
+}
+
+#enviar_btn:hover{
+    background-color: rgb(60, 118, 234);
+}
+
+.edit_del{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 0 ;
+}
+
+.edit_del button{
+    background-color: rgb(230, 230, 230);
+    font-size: medium;
+    width: 90px;
+    height: 28px;
+    cursor: pointer;
+    border: 1px solid black;;
+    transition: background-color 0.5s;
+}
+
+.edit_del button:hover{
+    background-color: rgb(172, 172, 172);;
+}
+
+
+/* editar.php */
+
+/* Botões Alterar e Cancelar */
+.canc_alt {
+    font-size: medium;
+    font-weight: bold;
+
+    margin-top: 5px;
+    width: 450px;
+    height: 60px;
+    
+    border: 1px solid black;
+    border-radius: 4px;
+
+    cursor: pointer;
+}
+
+/* Alterar */
+#alterar{
+    color: white;
+    background-color: rgb(91, 146, 255);
+    transition: background-color 0.4s;
+}
+
+#alterar:hover{
+    background-color: rgb(60, 118, 234);
+}
+
+/* Cancelar */
+#cancelar{
+    transition: background-color 0.4s;
+}
+
+#cancelar:hover{
+    background-color: rgb(219, 219, 219);
+}
+
+
+/* Deletar.php */
+
+/* Botões Deletar e Cancelar */
+.canc_del {
+    font-size: medium;
+    font-weight: bold;
+
+    margin-top: 22px;
+    width: 598px;
+    height: 60px;
+    
+    border: 1px solid black;
+    border-radius: 4px;
+
+    cursor: pointer;
+}
+
+/* Deletar */
+#deletar{
+    color: white;
+    background-color: rgb(255, 59, 59);
+    transition: background-color 0.4s;
+}
+
+#deletar:hover{
+    background-color: rgb(232, 39, 39);
+}
+
+/* Cancelar */
+#cancelar{
+    transition: background-color 0.4s;
+}
+
+#cancelar:hover{
+    background-color: rgb(219, 219, 219);
+}
+
+#msg_destacada{
+    color: rgb(255, 35, 35);
+    margin-left: 4px;
+}
+
+#msg_container{
+    font-size: larger;
+    display: inline-flex;
+}
