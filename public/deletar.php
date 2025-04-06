@@ -1,10 +1,12 @@
 <?php
-include("database.php");
+include_once("database.php");
 
 // Verifica se um id foi passado por GET.
 if (isset($_GET["id"])) {
 
     $id = (int) $_GET["id"];
+
+    // Consulta os dados do corretor com o id informado para deletar.
     $sql = "SELECT * FROM corretores WHERE id = '$id'";
 
     $result = mysqli_query($conn, $sql);
@@ -39,6 +41,7 @@ if (isset($_GET["id"])) {
         
     <!--Permite que o id seja passado pelo POST para o php.-->
     <input type="hidden" name="id" value="<?php echo $corretor['id']; ?>">
+
         <table>
             <tr>
                 <th>Id</th>
@@ -46,7 +49,7 @@ if (isset($_GET["id"])) {
                 <th>CPF</th>
                 <th>CRECI</th>
             </tr>
-            <tr>
+            <tr> <!-- Tabela com os dados do corretor a ser deletado -->
                 <td class='itens_tabela'><?php echo $corretor['id'];?></td>
 
                 <td class='itens_tabela'><?php echo $corretor["name"];?></td>
@@ -62,12 +65,14 @@ if (isset($_GET["id"])) {
     </form>
 
 <?php
+
+// Ao clicar em "Cancelar".
 if (isset($_POST["cancelar"])) {
     mysqli_close($conn);
     header("Location: index.php");
-    exit;
+    exit();
 
-} else if (isset($_POST["deletar"])) {
+} else if (isset($_POST["deletar"])) { // Ao clicar em "Deletar".
     $id = (int) $_POST["id"];
 
     $sql = "DELETE FROM corretores WHERE id = $id";
@@ -76,9 +81,10 @@ if (isset($_POST["cancelar"])) {
         die("Erro ao deletar dados.");
     }
     
+    // Fecha a conexão com o banco e redireciona para index.php
     mysqli_close($conn);
     header("Location: index.php");
-    exit;
+    exit();
 }
 ?>
 
