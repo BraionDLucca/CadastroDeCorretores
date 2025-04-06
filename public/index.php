@@ -38,153 +38,19 @@ $cpf = '';
 $nome = '';
 $creci = '';
 
-$cpfduplicado = false;
-$cpfinvalido = false;
-$nomeduplicado = false;
-$nomeinvalido = false;
-$creciduplicado = false;
-$creciinvalido = false;
-$vazio = false;
-
-$sql = "SELECT * FROM corretores";
-$result = mysqli_query($conn, $sql);
-imprimir_dados($result);
-
-
-if (isset($_POST["enviar"])){
-    $cpf = $_POST["cpf"];
-    $nome = $_POST["nome"];
-    $creci = $_POST["creci"];
-
-    // Variáveis usadas posteriormente para validação.
-    $cpfduplicado = false;
-    $cpfinvalido = false;
-    $nomeduplicado = false;
-    $nomeinvalido = false;
-    $creciduplicado = false;
-    $creciinvalido = false;
-    $vazio = false;
-
-    // Checa se o valor informado já existe no banco de dados.
-    $sql_cpf = "SELECT id FROM corretores WHERE cpf = '$cpf'";
-    $sql_name = "SELECT id FROM corretores WHERE name = '$nome'";
-    $sql_creci = "SELECT id FROM corretores WHERE creci = '$creci'";
-
-    // Checa o CPF informado.
-    if(mysqli_num_rows(mysqli_query($conn, $sql_cpf)) > 0) {
-        ?>
-        <script>
-        const msg_destacada = document.getElementById("msg_destacada")
-
-        msg_destacada.textContent += "CPF já cadastrado."
-        </script>
-        <?php
-        $cpfduplicado = true;
-    }
-
-    // Checa o nome informado.
-    if (mysqli_num_rows(mysqli_query($conn, $sql_name)) > 0) {
-        ?>
-        <script>
-        msg_destacada.textContent += " Nome já cadastrado."
-        </script>
-        <?php
-        $nomeduplicado = true;
-    }
-
-    // Checa o CRECI informado.
-    if (mysqli_num_rows(mysqli_query($conn, $sql_creci)) > 0) {
-        ?>
-        <script>
-        msg_destacada.textContent += " CRECI já cadastrado."
-        </script>
-        <?php
-        $creciduplicado = true;
-    }
-
-    if(empty($cpf) || empty($nome) || empty($creci)) {
-        ?>
-        <script>
-        msg_destacada.textContent += " Todos os campos são obrigatórios."
-        </script>
-        <?php
-        $vazio = true;
-    }
+$erros = array_fill(0, 7, '');
     
-    // Verifica se os campos estão vazios antes de inserir dados no banco.
-    if(!empty($cpf)) {
-    
-        // Verifica se o CPF informado é uma sequência de 11 números
-        // através de Regex.
-        if(!preg_match("/^\d{11}$/", $cpf)) {
-            ?>
-            <script>
-            msg_destacada.textContent += " CPF Inválido."
-            </script>
-            <?php
-            $cpfinvalido = true;
-        }
-    }
-    
-    if(!empty($nome)) {
-    
-        // Verifica se o nome informado é uma contém apenas letras e espaços
-        // através de Regex.
-        if(preg_match("/[^a-zA-Z\s]/", $nome)) {
-            ?>
-            <script>
-            msg_destacada.textContent += " Nome Inválido."
-            </script>
-            <?php
-            $nomeinvalido = true;
-        }
-    }
-    
-    
-    if(!empty($creci)) {
-    
-        // Verifica se o Creci informado é uma sequência de duas letras maiúsculas,
-        // "-", sequência de 4 a 6 números, "-", e as letras "F" ou "J", através de Regex.
-        if(!preg_match("/^[A-Z]{2}-\d{4,6}-[FJ]$/", $creci)) {
-            ?>
-            <script>
-            msg_destacada.textContent += " Creci Inválido."
-            </script>
-            <?php
-            $creciinvalido = true;
-        }
-    }
-       
-    
-        // Se estiver tudo certo, adiciona os dados no banco.
-        $sql = "INSERT INTO corretores (name, cpf, creci) VALUES ('$nome', '$cpf', '$creci')";
-    
-        if(!$cpfduplicado && !$cpfinvalido && !$nomeduplicado && !$nomeinvalido && !$creciduplicado && !$creciduplicado && !$creciinvalido && !$vazio) {
-            mysqli_query($conn, $sql);
-            $sql = "SELECT * FROM corretores WHERE name ='$nome' AND cpf = '$cpf' AND creci = '$creci'";
-            $result = mysqli_query($conn, $sql);
-            imprimir_dados($result);
-        }
-        /*else{
-            $sql = "SELECT * FROM corretores";
-            $result = mysqli_query($conn, $sql);
-            imprimir_dados($result);
-        }*/
-}
+// Função para criar linhas para a tabela exibida no site com os dados da consulta sql.
+function imprimir_dados($conn, $sql) {
 
-
-
-?>
-
-<!-- Exibe os elementos da tabela corretores -->.
-<?php
-      $sql = "SELECT * FROM corretores";
-      $result = mysqli_query($conn, $sql);
-      
-    // Cria linhas para a tabela com os dados da consulta sql.
-    function imprimir_dados($result){
-        while ($corretor = mysqli_fetch_assoc($result)) {
+    // Armazena os dados da consulta sql em result.
+    $result = mysqli_query($conn, $sql);
+    
+    while ($corretor = mysqli_fetch_assoc($result)) { // Percorre cada linha da tabela armazendas em
+                                                      // um array associativo a cada iteração.
+        if (!is_null($corretor)) {    
             echo "<tr>";
+
                 echo "<td class='itens_tabela'>" . $corretor['id'] . "</td>";
                 echo "<td class='itens_tabela'>" . $corretor['name'] . "</td>";
                 echo "<td class='itens_tabela'>" . $corretor['cpf'] . "</td>";
@@ -205,6 +71,129 @@ if (isset($_POST["enviar"])){
             echo "</tr>";
         }
     }
+}
+
+// Consulta os dados do banco e imprime na tabela do site.
+$sql = "SELECT * FROM corretores";
+imprimir_dados($conn, $sql);
+
+// Começo dos eventos ao clicar em "Enviar".
+if (isset($_POST["enviar"])){
+
+    // Importando valores informados no html para php através de POST. 
+    $cpf = $_POST["cpf"];
+    $nome = $_POST["nome"];
+    $creci = $_POST["creci"];
+
+    // Verifica se todos os campos estão vazios.
+    if(empty($cpf) || empty($nome) || empty($creci)) {
+        $erros[0] = true;
+    }
+
+    // Verifica se o CPF informado não é válido (uma sequência de 11 números)
+    // através de Regex.
+    if(!preg_match("/^\d{11}$/", $cpf)) {
+        $erros[1] = true;
+    } else {
+
+        // Se válido, verifica se o CPF já existe no banco de dados.
+        $sql = "SELECT id FROM corretores WHERE cpf = '$cpf'";
+
+        if(mysqli_num_rows(mysqli_query($conn, $sql)) > 0) {
+            $erros[2] = true;
+        }
+    }
+    
+    // Verifica se o CRECI informado não é uma sequência de duas letras maiúsculas,
+    // "-", sequência de 4 a 6 números, "-", e as letras "F" ou "J", através de Regex.
+    if(!preg_match("/^[A-Z]{2}-\d{4,6}-[FJ]$/", $creci)) {
+        $erros[3] = true;
+    } else {
+
+        // Se válido, verifica se o CRECI já existe no banco de dados.
+        $sql_creci = "SELECT id FROM corretores WHERE creci = '$creci'";
+        
+        if (mysqli_num_rows(mysqli_query($conn, $sql_creci)) > 0) {
+            $erros[4] = true;
+        }
+    }
+
+    // Verifica se o nome informado contém apenas letras e espaços através de Regex.
+    if(preg_match("/[^a-zA-Z\s]/", $nome) || strlen($nome) < 4) {
+        $erros[5] = true;
+    } else {
+
+        // Se válido, verifica se o nome já existe no banco de dados.
+        $sql_name = "SELECT id FROM corretores WHERE name = '$nome'";
+
+        if (mysqli_num_rows(mysqli_query($conn, $sql_name)) > 0 && $erros[2]) {
+            $erros[6] = true;   // O nome só é considerado já cadastrado se exitir no
+        }                       // banco de dados junto do CPF informado.
+    }
+
+    ?>
+
+    <!-- Importa o elemento "msg_destacada" do html para que sejam adicionadas mensagens de erro. --> 
+    <script>const msg_destacada = document.getElementById("msg_destacada")</script>
+
+    <?php
+
+    // Impressão de erros.
+    if ($erros[0]) {
+        ?>
+        <script>msg_destacada.textContent += " Todos os campos são obrigatórios."</script>
+        <?php
+    }
+    
+    // Se CPF não está vazio, verifica se é válido.
+    if (!empty($cpf) && $erros[1]) {
+        ?>
+        <script>msg_destacada.textContent += " CPF inválido."</script>
+        <?php
+
+    } else if ($erros[2]) {
+        ?>
+        <script>msg_destacada.textContent += "CPF já cadastrado."</script>
+        <?php
+    }
+
+    // Se CRECI não está vazio, verifica se é válido.
+    if ($erros[3] && !empty($creci)) {
+        ?>
+        <script>msg_destacada.textContent += " Creci Inválido."</script>
+        <?php
+    
+    } elseif ($erros[4]) {
+        ?>
+        <script>msg_destacada.textContent += " CRECI já cadastrado."</script>
+        <?php
+    }
+    
+    // Se nome não está vazio, verifica se é válido.
+    if ($erros[5] && !empty($nome)) {
+        ?>
+        <script>msg_destacada.textContent += " Nome Inválido."</script>
+        <?php
+        
+    } elseif ($erros[6]) { // Se válido, verifica se 
+        ?>
+        <script>msg_destacada.textContent += " Nome já cadastrado."</script>
+        <?php
+    }
+
+    // Verifica se não há erros.
+    if(!in_array(true, $erros, true)) {
+
+        // Adiciona os dados informados no banco de dados.
+        $sql = "INSERT INTO corretores (name, cpf, creci) VALUES ('$nome', '$cpf', '$creci')";
+        mysqli_query($conn, $sql);
+
+        // Imprime os dados recém adicionados na tabela do site.
+        $sql = "SELECT * FROM corretores WHERE name ='$nome' AND cpf = '$cpf' AND creci = '$creci'";
+        imprimir_dados($conn, $sql);
+    }
+} // Fim dos eventos ao clicar em "Enviar".
+
 mysqli_close($conn);
 ?>
 
